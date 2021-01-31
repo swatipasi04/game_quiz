@@ -1,5 +1,3 @@
-/*google fonts */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
 
 *{
   margin: 0;
@@ -14,7 +12,9 @@ body{
 .start_btn,
 .info_box,
 .quiz_box,
-.result_box{
+.result_box,
+.game-over,
+.showResults{
   position: absolute;
   top:50%;
   left: 50%;
@@ -26,7 +26,9 @@ body{
 
 .info_box.activeInfo,
 .quiz_box.activeQuiz,
-.result_box.activeResult{
+.result_box.activeResult,
+.game-over.activeOver,
+.showResults.activeScore{
   z-index: 5;
   opacity: 1;
   pointer-events: auto;
@@ -360,4 +362,52 @@ footer .next_btn:hover{
   border: 1px solid #bd0646;
   cursor: pointer;
   transition: all 0.3 ease;
+}
+
+.game-over{
+  background: white;
+  color: black;
+  width: 450px;
+  font-size: 50px;
+  padding: 25px 30px;
+  border-radius: 5px;
+  display: flex;
+  text-align: center;
+  align-items: center;
+  flex-direction: column;
+  justify-content: space-between;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0.9);
+}
+
+.showResults{
+  background: white;
+  color: black;
+  width: 450px;
+  font-size: 20px;
+  padding: 25px 30px;
+  border-radius: 5px;
+  display: flex;
+  text-align: center;
+  align-items: center;
+  flex-direction: column;
+  justify-content: space-between;
+  line-height: 70px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0.9);
+}
+
+.winner{
+  font-size: 20px;
+  font-weight: 500;
+  color: #ed3b5d;
+  padding: 5px 5px;
+  outline: none;
+  border: 2px solid #ed3b5d;
+  border-radius: 5px;
+  background: white;
+  cursor: pointer;
+  pointer-events: auto;
 }

@@ -6,9 +6,8 @@
     <title>Quiz Game</title>
     <link rel="stylesheet" href="./style.css">
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
-    <script type="text/javascript" scr="https://kit.fontawesome.com/a076d05399.js"></script>
   </head>
-  <body> 
+  <body>
     <!-- start quiz button -->
     <div class="start_btn">
       <button>START</button>
@@ -48,53 +47,44 @@
       </header>
 
       <section>
+        <!-- question -->
         <div class="que_text">
-          <!-- <span>What does HTML stands for?</span> -->
+
         </div>
+        <!-- opions -->
         <div class="option_list">
-          <!-- <div class="option">
-            <span>Hyper text Preprocessor</span>
-            <div class="icon cross">
-              <i class="fas fa-times"></i>
-            </div>
-          </div>
-          <div class="option">
-            <span>Hyper text markup language</span>
-            <div class="icon tick">
-              <i class="fas fa-check"></i>
-            </div>
-          </div>
-          <div class="option">
-            <span>Hyper text multiple language</span>
-          </div>
-          <div class="option">
-            <span>Hyper tool multi language</span>
-          </div> -->
+
         </div>
       </section>
         <!-- quiz box footer -->
         <footer>
           <div class="total_que">
-            <!-- <span><p>2</p>of<p>5</p>Questions</span> -->
+
           </div>
-          <button class="next_btn" type="button" name="button">Next Ques</button>
         </footer>
     </div>
 
-    <!-- result box -->
+    <div class="game-over" >
+      GAME OVER
+    </div>
+
+    <!-- Winner result box -->
     <div class="result_box">
       <div class="icon">
         <i class="fas fa-crown"></i>
       </div>
-      <div class="complete_text">You have completed the quiz</div>
+      <div class="complete_text">The quiz is completed</div>
       <div class="score_text">
-        <!-- <span>and sorry, You got only<p>2</p> out of <p>5</p></span> -->
-      </div>
-      <div class="buttons">
-        <button class="restart" type="button" name="button">Replay Quiz</button>
-        <button class="quit" type="button" name="button">Quit Quiz</button>
 
       </div>
+      <div class="buttons">
+        <button class="quit" type="button" name="button">Quit Quiz</button>
+      </div>
+    </div>
+
+    <!-- Leaderboard -->
+    <div class="showResults">
+      <h1>LEADER BOARD</h1>
     </div>
     <script src="./questions.js"></script>
     <script src="./script.js"></script>

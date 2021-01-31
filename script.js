@@ -7,11 +7,23 @@ const option_list = document.querySelector(".option_list");
 const timeCount = quiz_box.querySelector(".timer .timer_sec");
 const timeLine = quiz_box.querySelector("header .time_line");
 const timeOff = quiz_box.querySelector("header .time_text");
+const gameOver = document.querySelector(".game-over");
 
+let questionCounter = 0;
+let currentQuestion;
+let availableQuestion = [];
+let availableOptions = [];
+
+
+function setAvailableQuestions(){
+  const totalQuestion = questions.length ;
+  for(let i=0; i<totalQuestion; i++){
+    availableQuestion.push(questions[i]);
+  }
+}
 
 //if start quiz is clicked
 start_btn.onclick = function(){
-  // console.log("hello");
   info_box.classList.add("activeInfo"); //shows info box
 };
 
@@ -24,7 +36,8 @@ exit_btn.onclick = function(){
 continue_btn.onclick = function(){
   info_box.classList.remove("activeInfo"); //hide info box
   quiz_box.classList.add("activeQuiz"); //show quiz box
-  showQuestions(0);
+  setAvailableQuestions();
+  getNewQuestion();
   queCounter(1);
   startTimer(15);
   startTimerLine(0);
@@ -39,130 +52,110 @@ var timeValue = 15;
 var widthValue = 0;
 var userScore = 0;
 
-const next_btn = quiz_box.querySelector(".next_btn");
 const result_box = document.querySelector(".result_box");
-const restart_quiz = result_box.querySelector(".buttons .restart");
 const quit_quiz = result_box.querySelector(".buttons .quit");
 
-restart_quiz.onclick = function(){
-  quiz_box.classList.add("activeQuiz");
-  result_box.classList.remove("activeResult");
-  var que_count = 0;
-  var que_numb = 1;
-  var timeValue = 15;
-  var widthValue = 0;
-  var userScore = 0;
-  showQuestions(que_count);
-  queCounter(que_numb);
-  clearInterval(counter); // ye hatana hai apne 3 ques k 15 sec k liye
-  startTimer(timeValue);
-  clearInterval(counterLine); // ye hatana hai apne 3 ques k 15 sec k liye
-  startTimerLine(widthValue);
-  next_btn.style.display = "none"; //ye dekhna hai for sidha next
-  timeOff.textContent = "Time Left";
-
-}
 
 quit_quiz.onclick = function(){
   window.location.reload();
 }
 
-//if next btn is clicked;
-next_btn.onclick = function(){
-  if(que_count < questions.length-1){
+//if correct option is clicked
+function next(){
+  if(que_count < 2){
     que_count+=1;
     que_numb+=1;
-    showQuestions(que_count);
+    getNewQuestion();
     queCounter(que_numb);
-    clearInterval(counter); // ye hatana hai apne 3 ques k 15 sec k liye
-    startTimer(timeValue);
-    clearInterval(counterLine); // ye hatana hai apne 3 ques k 15 sec k liye
-    startTimerLine(widthValue);
-    next_btn.style.display = "none"; //ye dekhna hai for sidha next
     timeOff.textContent = "Time Left";
-
   }else{
-    clearInterval(counter); // ye hatana hai apne 3 ques k 15 sec k liye
-    clearInterval(counterLine); // ye hatana hai apne 3 ques k 15 sec k liye
-    console.log("ques completed");
-    showResultBox();
+      //console.log("ques completed");
+      clearInterval(counter);
+      clearInterval(counterLine);
+      //var t = document.querySelector(".timer_sec");
+      //console.log("timeValue", 15 - t.textContent);
+      generateResults();
   }
-
 }
 
-
-//taking questions and options from array
-function showQuestions(index){
+//get new // QUESTION:
+function getNewQuestion() {
+  //set ques textContent //random ques
   const que_text = document.querySelector(".que_text");
+  const questionIndex = availableQuestion[Math.floor(Math.random() * availableQuestion.length)];
+  //console.log("questionIndex",questionIndex);
+  currentQuestion = questionIndex;
+  var que_tag = '<span>'+ (questionCounter +1) + ". " + currentQuestion.question+'</span>';
+  // get index of currentQuestion and remove it
+  var index1 = availableQuestion.indexOf(questionIndex);
+  //remove
+  availableQuestion.splice(index1, 1);
+  // create options in html
+  var option_tag = '<div class="option"><span>'+ currentQuestion.options[0] +'</span></div>'
+                  + '<div class="option"><span>'+currentQuestion.options[1] +'</span></div>'
+                  + '<div class="option"><span>'+ currentQuestion.options[2] +'</span></div>'
+                  +'<div class="option"><span>'+ currentQuestion.options[3] +'</span></div>';
 
-  var que_tag = '<span>'+ questions[index].numb + ". " + questions[index].question+'</span>';
-  var option_tag = '<div class="option"><span>'+ questions[index].options[0] +'</span></div>'
-                  + '<div class="option"><span>'+ questions[index].options[1] +'</span></div>'
-                  + '<div class="option"><span>'+ questions[index].options[2] +'</span></div>'
-                  +'<div class="option"><span>'+ questions[index].options[3] +'</span></div>';
   que_text.innerHTML = que_tag;
   option_list.innerHTML = option_tag;
+  var correctans = currentQuestion.answer;
   const option = option_list.querySelectorAll(".option");
   for (var i = 0; i < option.length; i++) {
-    option[i].setAttribute("onclick", "optionSelected(this)");
+    option[i].setAttribute('onClick','optionSelected(this,'+currentQuestion.answer+')');
   }
+  questionCounter+=1;
 }
+
 
 var tickIcon = '<div class="icon tick"><i class="fas fa-check"></i></div>';
 var crossIcon = '<div class="icon cross"><i class="fas fa-times"></i></div>';
 
 
-function optionSelected(answer){
-  clearInterval(counter); // ye hatana hai apne 3 ques k 15 sec k liye
-  clearInterval(counterLine);// ye hatana hai apne 3 ques k 15 sec k liye
+function optionSelected(answer, correctAns){
+  //console.log("correctans", correctAns);
   var userAns = answer.textContent;
-  var correctAns = questions[que_count].answer;
   var allOptions = option_list.children.length;
   if(userAns == correctAns){
     userScore+=1;
-    console.log(userScore);
+    //console.log("userScore", userScore);
+
     answer.classList.add("correct");
     answer.insertAdjacentHTML("beforeend", tickIcon);
-    console.log(correctAns);
+
+    for (var i = 0; i < allOptions; i++) {
+      option_list.children[i].classList.add("disabled");
+    }
+    next();
+
   }else{
     answer.classList.add("incorrect");
     answer.insertAdjacentHTML("beforeend", crossIcon);
+    info_box.classList.remove("activeInfo"); //hide info box
+    quiz_box.classList.remove("activeQuiz"); //hide quiz box
+    gameOver.classList.add("activeOver");
+    clearInterval(counter);
+    clearInterval(counterLine);
+    //var t = document.querySelector(".timer_sec");
+    //console.log("timeValue", 15 - t.textContent);
 
-    //if ans is incorrect then automatically selected the correct ans
-    for (var i = 0; i < allOptions; i++) {
-      if(option_list.children[i].textContent == correctAns){
-        option_list.children[i].setAttribute("class", "option correct");
-        option_list.children[i].insertAdjacentHTML("beforeend", tickIcon);
-
-      }
-    }
   }
-
-  //once user selected disbled all
-  for (var i = 0; i < allOptions; i++) {
-    option_list.children[i].classList.add("disabled");
-  }
-  next_btn.style.display = "block"; //ye dekhna hai for sidha next
 }
 
 
-function showResultBox() {
+function showResultBox(a,b) {
   info_box.classList.remove("activeInfo"); //hide info box
   quiz_box.classList.remove("activeQuiz"); //hide quiz box
   result_box.classList.add("activeResult"); //show result box
   const scoreText =  result_box.querySelector(".score_text");
-  if(userScore >   3){
-    let scoreTag = '<span>and congrats, You got <p>'+ userScore +'</p> out of <p>'+ questions.length+'</p></span>';
+  // console.log("userScore", userScore);
+  if(a === "YOU"){
+    let scoreTag = '<span>and the winner is <p>'+ 'YOU' +'</p>with time<p>'+b+'</p>s</span>';
+    scoreText.innerHTML = scoreTag;
+  }else{
+    let scoreTag = '<span>The winner is <p>Player</p><p>'+a+'</p><p>with time</p><p>'+b+'</p>s</span>';
     scoreText.innerHTML = scoreTag;
   }
-  else if(userScore >   1){
-    let scoreTag = '<span>and nice, You got <p>'+ userScore +'</p> out of <p>'+ questions.length+'</p></span>';
-    scoreText.innerHTML = scoreTag;
-  }
-  else{
-    let scoreTag = '<span>and sorry, You got only<p>'+ userScore +'</p> out of <p>'+ questions.length+'</p></span>';
-    scoreText.innerHTML = scoreTag;
-  }
+
 }
 
 function startTimer(time){
@@ -178,24 +171,9 @@ function startTimer(time){
       clearInterval(counter);
       timeCount.textContent = "00";
       timeOff.textContent = "Time Off";
-
-      var correctAns = questions[que_count].answer;
-      var allOptions = option_list.children.length;
-
-      //timesup then show correct ans
-      for (var i = 0; i < allOptions; i++) {
-        if(option_list.children[i].textContent == correctAns){
-          option_list.children[i].setAttribute("class", "option correct");
-          option_list.children[i].insertAdjacentHTML("beforeend", tickIcon);
-
-        }
-      }
-
-      //and disable all options and display next btn
-      for (var i = 0; i < allOptions; i++) {
-        option_list.children[i].classList.add("disabled");
-      }
-      next_btn.style.display = "block"; //ye dekhna hai for sidha next
+      var t = document.querySelector(".timer_sec");
+      //console.log("timeValue", t.textContent);
+      generateResults();
     }
   }
 }
@@ -203,7 +181,6 @@ function startTimer(time){
 function startTimerLine(time){
   counterLine = setInterval(timer, 29);
   function timer(){
-    // timeLine.textContent = time;
     time+=1;
     timeLine.style.width = time + "px";
     if(time > 549){
@@ -215,6 +192,63 @@ function startTimerLine(time){
 
 function queCounter(index){
   const bottom_ques_counter = quiz_box.querySelector(".total_que");
-  var totalQuesCount = '<span><p>'+ index +'</p>of<p>'+ questions.length +'</p>Questions</span>';
+  var totalQuesCount = '<span><p>'+ index +'</p>of<p>'+ 3 +'</p>Questions</span>';
   bottom_ques_counter.innerHTML = totalQuesCount;
 }
+
+
+//generate Leaderboard
+function generateResults(){
+    var t = document.querySelector(".timer_sec");
+    //console.log("timeValue", 15 - t.textContent);
+    clearInterval(counter);
+    clearInterval(counterLine);
+    info_box.classList.remove("activeInfo"); //hide info box
+    quiz_box.classList.remove("activeQuiz"); //hide quiz box
+
+    let users = {};
+    for(let i=0;i<5;i++)
+      users[i] = parseFloat((Math.random() * 14 ).toFixed(2));
+    users[5] = (15 - t.textContent);
+    //console.log("mytime", (15-t.textContent));
+    let usersArray = Object.entries(users).sort((a,b)=>{return a[1]-b[1]})
+    //console.log("users",usersArray);
+    let showResults = document.querySelector(".showResults");
+    showResults.classList.add("activeScore");
+
+        for (var j = 1; j<7;j++) {
+            if(usersArray[j-1][1] == (15 - t.textContent)){
+              let div = document.createElement('div');
+              div.innerHTML = "YOU" + " : " + usersArray[j-1][1];
+              showResults.appendChild(div);
+            }
+            else{
+              let div = document.createElement('div');
+              div.innerHTML = "PLAYER" + usersArray[j-1][0] + " : " + usersArray[j-1][1];
+              showResults.appendChild(div);
+            }
+          }
+          let winnerFinal = document.createElement('button');
+          winnerFinal.innerHTML = "WINNER";
+          var att = document.createAttribute("class");       // Creating a "class" attribute for winner
+          att.value = "winner";                           // Setting the value of the class as winner
+          winnerFinal.setAttributeNode(att);
+          showResults.appendChild(winnerFinal);
+          if(usersArray[0][1] == (15 - t.textContent)){
+            a = "YOU";
+            b = usersArray[0][1];
+          }else{
+              a = usersArray[0][0];
+              b = usersArray[0][1];
+          }
+          showResults.childNodes[3].style.color="green";
+
+          var winnerButton = document.querySelector(".winner");
+          //console.log("winnerButton", winnerButton);
+          winnerButton.onclick = function(){
+            showResults.classList.remove("activeScore"); //hide Leaderboard box
+            //console.log("winner clicked");
+            showResultBox(a,b);
+          };
+
+  }
