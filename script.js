@@ -212,7 +212,9 @@ function startTimer(time){
       timeCount.textContent = "00";
       timeOff.textContent = "Time Off";
       var t = document.querySelector(".timer_sec");
-      generateResults();
+      info_box.classList.remove("activeInfo"); //hide info box
+      quiz_box.classList.remove("activeQuiz"); //hide quiz box
+      gameOver.classList.add("activeOver");
     }
   }
 }
@@ -224,6 +226,7 @@ function startTimerLine(time){
     timeLine.style.width = time + "px";
     if (time > 549) {
       clearInterval(counterLine);
+
     }
   }
 }
